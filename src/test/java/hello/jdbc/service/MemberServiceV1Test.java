@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.SQLException;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +35,14 @@ class MemberServiceV1Test {
 		service = new MemberServiceV1(repository);
 	}
 	
-//	@Test
+	@AfterEach
+	void after() throws SQLException {
+		repository.delete(MEMBER_A);
+		repository.delete(MEMBER_B);
+		repository.delete(MEMBER_EX);
+	}
+	
+	@Test
 	@DisplayName("정상이체")
 	void accountTransfer() throws SQLException {
 		
