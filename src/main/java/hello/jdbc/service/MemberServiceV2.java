@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberServiceV2 {
 
 	private final DataSource dataSource;
-	private final MemberRepositoryV2 memberRepositoryV1;
+	private final MemberRepositoryV2 memberRepositoryV2;
 	
 	public void accountTransfer(String fromId, String toId, int money) throws SQLException {
 		Connection con = dataSource.getConnection();
@@ -42,12 +42,12 @@ public class MemberServiceV2 {
 	}
 
 	private void bizLogic(Connection con, String fromId, String toId, int money) throws SQLException {
-		Member fromMember = memberRepositoryV1.findById(con, fromId);
-		Member toMember = memberRepositoryV1.findById(con, toId);
+		Member fromMember = memberRepositoryV2.findById(con, fromId);
+		Member toMember = memberRepositoryV2.findById(con, toId);
 		
-		memberRepositoryV1.update(con, fromId, fromMember.getMoney() - money);
+		memberRepositoryV2.update(con, fromId, fromMember.getMoney() - money);
 		validation(toMember);
-		memberRepositoryV1.update(con, toId, toMember.getMoney() + money);
+		memberRepositoryV2.update(con, toId, toMember.getMoney() + money);
 	}
 	
 	private void release(Connection con) {
