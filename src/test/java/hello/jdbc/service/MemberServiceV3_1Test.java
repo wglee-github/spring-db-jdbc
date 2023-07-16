@@ -15,8 +15,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import hello.jdbc.connection.ConnectionConst;
 import hello.jdbc.domain.Member;
-import hello.jdbc.repository.MemberRepositoryV1;
-import hello.jdbc.repository.MemberRepositoryV2;
 import hello.jdbc.repository.MemberRepositoryV3;
 import lombok.extern.slf4j.Slf4j;
 

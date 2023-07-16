@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import hello.jdbc.domain.Member;

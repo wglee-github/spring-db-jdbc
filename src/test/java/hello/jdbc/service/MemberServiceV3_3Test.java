@@ -4,11 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.support.JdbcTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -23,26 +31,40 @@ import lombok.extern.slf4j.Slf4j;
  * 트랜잭션 - 커넥션 파라미터 전달 방식 동기화
  */
 @Slf4j
-class MemberServiceV3_2Test {
+@SpringBootTest
+class MemberServiceV3_3Test {
 
 	private static final String MEMBER_A = "memberA";
 	private static final String MEMBER_B = "memberB";
 	private static final String MEMBER_EX = "ex";
 	
+	@Autowired
 	private MemberRepositoryV3 repository;
-	private MemberServiceV3_2 service;
+	@Autowired
+	private MemberServiceV3_3 service;
 	
-	@BeforeEach
-	void before() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource(ConnectionConst.URL, ConnectionConst.USERNAME, ConnectionConst.PASSWORD);
-		repository = new MemberRepositoryV3(dataSource);
-		/**
-		 *  스프링 5.3부터는 JDBC 트랜잭션을 관리할 때 DataSourceTransactionManager를 상속받아서 약간의 
-			기능을 확장한 JdbcTransactionManager를 제공한다. 둘의 기능 차이는 크지 않으므로 같은 것으로 이해하면 된다.
-		 */
-//		PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
-		PlatformTransactionManager transactionManager = new JdbcTransactionManager(dataSource);
-		service = new MemberServiceV3_2(transactionManager, repository);
+	@TestConfiguration
+	static class TestConfig {
+		
+		@Bean
+		DataSource dataSource() {
+			return new DriverManagerDataSource(ConnectionConst.URL, ConnectionConst.USERNAME, ConnectionConst.PASSWORD);
+		}
+		
+		@Bean
+		PlatformTransactionManager transactionManager() {
+			return new JdbcTransactionManager(dataSource());
+		}
+		
+		@Bean
+		MemberRepositoryV3 memberRepositoryV3() {
+			return new MemberRepositoryV3(dataSource());
+		}
+		
+		@Bean
+		MemberServiceV3_3 memberServiceV3_3() {
+			return new MemberServiceV3_3(memberRepositoryV3());
+		}
 	}
 	
 	@AfterEach
@@ -50,6 +72,14 @@ class MemberServiceV3_2Test {
 		repository.delete(MEMBER_A);
 		repository.delete(MEMBER_B);
 		repository.delete(MEMBER_EX);
+	}
+	
+	@Test
+	void aopCheck() {
+		log.info("MemberService={}", service.getClass());
+		log.info("MemberRepository={}", repository.getClass());
+		assertThat(AopUtils.isAopProxy(service)).isTrue();
+		assertThat(AopUtils.isAopProxy(repository)).isFalse();
 	}
 	
 	@Test
