@@ -7,14 +7,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import hello.jdbc.domain.Member;
 import hello.jdbc.repository.MemberRepositoryV3;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  * 트랜잭션 - 트랜잭션 템플릿
  *
  */
-@Slf4j
 public class MemberServiceV3_2 {
 	
 	private final TransactionTemplate txTemplate;

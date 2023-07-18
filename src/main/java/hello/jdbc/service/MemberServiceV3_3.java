@@ -6,14 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import hello.jdbc.domain.Member;
 import hello.jdbc.repository.MemberRepositoryV3;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  * 트랜잭션 - @Transactional AOP
  *
  */
-@Slf4j
 public class MemberServiceV3_3 {
 	
 	private final MemberRepositoryV3 memberRepositoryV3;
